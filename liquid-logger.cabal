@@ -13,9 +13,10 @@ build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
-executable analyzeLogs
+Library 
   default-language: Haskell98
+  hs-source-dirs: src 
   Build-Depends: base >= 4 && < 5
                , csv-table >= 0.1.0.1 
                , csv == 0.1.2
-  Main-is: src/Main.hs 
+  Exposed-Modules: AnalyzeLogs 
