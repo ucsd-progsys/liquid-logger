@@ -1,22 +1,26 @@
-module AnalyzeLogs (collate) where
+module AnalyzeLogs where
 
 import           Data.CSV.Table
 import           Text.CSV
 import qualified Data.List as L
 import           System.Directory (getDirectoryContents)
 import           Data.Function (on)
+import           System.FilePath
 
 --------------------------------------------------------------------------------
 collateDir :: FilePath -> FilePath -> IO Table
 --------------------------------------------------------------------------------
 collateDir dir f = do
-  fs      <- getDirectoryContents dir
-  let csvs = filter (".csv" `L.isSuffixOf`) fs
-  ts      <- mapM load fs
+  ts      <- mapM load =<< dirCsvs dir
   let ts'  = fst <$> L.sortBy (compare `on` snd) ts
   let t    = transform ts'
   toFile f t
   return t
+
+dirCsvs :: FilePath -> IO [FilePath]
+dirCsvs dir = do
+  fs      <- getDirectoryContents dir
+  return [dir </> f | f <- fs, ".csv" `L.isSuffixOf` f]
 
 -- | Usage:
 --      ghci> collate ["summary-1.csv", "summary-2.csv", ... , "summary-n.csv"] "out.csv"

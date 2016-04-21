@@ -20,5 +20,6 @@ Library
                , csv-table >= 0.1.0.1
                , csv == 0.1.2
                , directory
+               , filepath
                
   Exposed-Modules: AnalyzeLogs
