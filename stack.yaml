@@ -1,0 +1,13 @@
+
+resolver: lts-5.9
+
+packages:
+- '.'
+- location:
+    git: git@github.com:ucsd-progsys/csv-table.git
+    commit: d17521614a765cc41a8a2e295b4638b9c428e978
+
+
+extra-deps: 
+- csv-table-0.1.0.1
+
