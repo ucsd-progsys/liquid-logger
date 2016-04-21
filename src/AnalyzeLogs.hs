@@ -3,27 +3,43 @@ module AnalyzeLogs (collate) where
 import           Data.CSV.Table
 import           Text.CSV
 import qualified Data.List as L
+import           System.Directory (getDirectoryContents)
+import           Data.Function (on)
+
+--------------------------------------------------------------------------------
+collateDir :: FilePath -> FilePath -> IO Table
+--------------------------------------------------------------------------------
+collateDir dir f = do
+  fs      <- getDirectoryContents dir
+  let csvs = filter (".csv" `L.isSuffixOf`) fs
+  ts      <- mapM load fs
+  let ts'  = fst <$> L.sortBy (compare `on` snd) ts
+  let t    = transform ts'
+  toFile f t
+  return t
 
 -- | Usage:
 --      ghci> collate ["summary-1.csv", "summary-2.csv", ... , "summary-n.csv"] "out.csv"
---
 --------------------------------------------------------------------------------
 collate :: [FilePath] -> FilePath -> IO Table
 --------------------------------------------------------------------------------
 collate fs f = do
   ts    <- mapM load fs
-  let t  = transform ts
+  let t  = transform (fst <$> ts)
   toFile f t
   return t
 
 --------------------------------------------------------------------------------
-load :: FilePath -> IO Table
+load :: FilePath -> IO (Table, TimeStamp)
 --------------------------------------------------------------------------------
 load f = mkTable f <$> readFile f
 
-mkTable :: FilePath -> String -> Table
-mkTable f s = fromString f $ unlines (hdr : body)
+type TimeStamp  = String
+
+mkTable :: FilePath -> String -> (Table, TimeStamp)
+mkTable f s = (tab, stamp)
   where
+    tab     = fromString f $ unlines (hdr : body)
     hdr     = "test, time-" ++ stamp ++ ",result"
     body    = drop 6 ls
     stamp   = drop 17 (ls !! 2)
