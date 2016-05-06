@@ -8,10 +8,10 @@ to detect performance regresssions. To use it:
 ```
 $ stack ghci
 
-ghci> collateDir "logs" "logs/out/out.csv" 
+ghci> collateDir "elim-logs" "elim-logs/out/out.csv" 
 ```
 
-will produce `logs/out/out.csv` which 
+will produce `elim-logs/out/out.csv` which 
 
 1. *joins* the times from each run,
 2. *orders* the benchmarks by the range of running times.
